@@ -68,11 +68,6 @@ class LLMConfig(LMBaseConfig):
 class VLMConfig(LMBaseConfig):
     pass
 
-class BailianConfig(BaseModel):
-    base_url: str
-    api_key: str
-    model_config = ConfigDict(from_attributes=True)
-
 class RAGAppConfig(BaseModel):
     mineru: MineruConfig
     logging: LoggingConfig
@@ -80,7 +75,6 @@ class RAGAppConfig(BaseModel):
     milvus: MilvusConfig
     llm: LLMConfig
     vlm: VLMConfig
-    bailian: BailianConfig
     postgre: PostgreConfig
     model_config = ConfigDict(from_attributes=True)
 

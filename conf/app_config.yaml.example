@@ -1,0 +1,45 @@
+# 配置模板：复制为 app_config.yaml 并填入真实密钥（app_config.yaml 已被 .gitignore 忽略，不会入库）
+logging:
+  file:
+    enable: false
+    level: INFO
+    path: logs
+    rotation: "10 MB"
+    retention: "7 days"
+  console:
+    enable: true
+    level: INFO
+
+mineru:
+  base_url: https://mineru.net/api/v4
+  token: <your-mineru-token>
+
+minio:
+  endpoint: localhost:9000
+  access_key: minioadmin
+  secret_key: <your-minio-secret-key>
+  bucket_name: rag-bucket
+  secure: false
+
+milvus:
+  host: localhost
+  port: 19530
+  user: root
+  password: <your-milvus-password>
+
+postgre:
+  host: localhost
+  port: 5433
+  user: mmgmmg
+  password: <your-postgres-password>
+  db_name: enterprise_rag
+
+llm:
+  model_name: deepseek-chat
+  base_url: https://api.deepseek.com
+  api_key: <your-deepseek-api-key>
+
+vlm:
+  model_name: deepseek-v4-flash-vision-exp
+  base_url: https://api.deepseek.com
+  api_key: <your-deepseek-api-key>

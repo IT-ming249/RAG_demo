@@ -548,25 +548,6 @@ wheels = [
 ]
 
 [[package]]
-name = "dashscope"
-version = "1.26.7"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "certifi" },
-    { name = "cryptography" },
-    { name = "httpx" },
-    { name = "httpx-sse" },
-    { name = "requests" },
-    { name = "rich" },
-    { name = "typer" },
-    { name = "websocket-client" },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/55/af/6f65d1d46f67206c80a0d24a236b0930cdffc540badba3d9d57fa4fce34b/dashscope-1.26.7-py3-none-any.whl", hash = "sha256:e7797ff99c5335589ecd0b97391611dd68dc3da6a28681dab5c522759b22922d", size = 1537542, upload-time = "2026-08-12T13:03:59.002Z" },
-]
-
-[[package]]
 name = "detect-installer"
 version = "0.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2335,7 +2316,6 @@ source = { virtual = "." }
 dependencies = [
     { name = "aiofiles" },
     { name = "asgiref" },
-    { name = "dashscope" },
     { name = "fastapi", extra = ["standard"] },
     { name = "httpx" },
     { name = "langchain" },
@@ -2357,7 +2337,6 @@ dependencies = [
 requires-dist = [
     { name = "aiofiles", specifier = ">=25.1.0" },
     { name = "asgiref", specifier = ">=3.11.1" },
-    { name = "dashscope", specifier = ">=1.25.17" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.136.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "langchain", specifier = ">=1.2.17" },

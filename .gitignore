@@ -9,5 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
+# Local config with real secrets (use app_config.yaml.example as template)
+conf/app_config.yaml
+
 # IDE
 .idea/
