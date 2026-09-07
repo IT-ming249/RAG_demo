@@ -146,14 +146,14 @@ class MineruIntegration:
         return str(target_md_file.resolve())
 
 
-mineru_integration = MineruIntegration()
+mineru_client = MineruIntegration()
 
 
 if __name__ == "__main__":
     async def test():
-        full_zip_url = await mineru_integration.upload_file(Path("uploads/test.pdf"))
+        full_zip_url = await mineru_client.upload_file(Path("uploads/test.pdf"))
         logger.info(full_zip_url)
-        md_file_path = await mineru_integration.download_markdown(full_zip_url, Path("uploads/"))  # type: ignore[arg-type]
+        md_file_path = await mineru_client.download_markdown(full_zip_url, Path("uploads/"))  # type: ignore[arg-type]
         logger.info(md_file_path)
 
     asyncio.run(test())

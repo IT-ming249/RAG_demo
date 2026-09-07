@@ -26,8 +26,8 @@ graph = graph_builder.compile()
 
 if __name__ == '__main__':
     import asyncio
-    file_path = "PATH TO PDF FILE"
-    markdown_dir = "PATH TO  MARKDOWN DIR"
+    file_path = "C:/for_python/Python_project/RAG/test/test_file/test.pdf"
+    markdown_dir = "C:/for_python/Python_project/RAG/test/test_md_dir"
     state = IngestGraphState(
         file_path=file_path,
         markdown_dir=markdown_dir

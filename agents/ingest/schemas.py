@@ -4,14 +4,15 @@ from typing import Literal
 from pathlib import Path
 
 class IngestGraphState(BaseModel):
-    file_path: str
+    file_path: Path
     markdown_dir: Path
+    markdown_file: str | None = None
 
     should_continue: bool = True
     error: str | None = None
 
 
-# Minio, Miluvs对象上下文
+# Minio, Milvus对象上下文
 class IngestGraphContext(BaseModel):
     pass
 
