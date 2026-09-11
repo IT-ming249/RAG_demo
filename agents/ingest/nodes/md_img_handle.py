@@ -82,12 +82,12 @@ async def md_img_handle(state: IngestGraphState, runtime: Runtime[IngestGraphSte
                 ]
                 response = await vlm_client.ainvoke(messages)
                 summary = response.content.strip().replace("\n", "")
-                md_content = md_content = pattern.sub(f"![{summary}]({image_url})", md_content, count=1)
+                md_content = pattern.sub(f"![{summary}]({image_url})", md_content, count=1)
 
                 # 3. 将处理后的markdown内容写回文件
                 # 这一步仅测试用
-                async with aiofiles.open(state.markdown_dir / "new_md.md", 'w', encoding='utf-8') as f:
-                    await f.write(md_content)
+                # async with aiofiles.open(state.markdown_dir / "new_md.md", 'w', encoding='utf-8') as f:
+                #     await f.write(md_content)
 
     except Exception as e:
         writer(IngestGraphStepInfo(name="md文件图片处理", status="failed", error=str(e)))
