@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from langgraph.graph import StateGraph, START, END
 from agents.ingest.schemas import IngestGraphState, IngestGraphContext
 from agents.ingest.nodes.pdf_to_md import pdf_to_md
@@ -26,8 +28,11 @@ graph = graph_builder.compile()
 
 if __name__ == '__main__':
     import asyncio
-    file_path = "C:/for_python/Python_project/RAG/test/test_file/test.pdf"
-    markdown_dir = "C:/for_python/Python_project/RAG/test/test_md_dir"
+    # 项目根目录：本文件位于 agents/ingest/ 下，向上两级即项目根
+    project_root = Path(__file__).resolve().parents[2]
+
+    file_path = project_root / "test" / "test_file" / "USGS.Alaska-and-Landsat.pdf"
+    markdown_dir = project_root / "test" / "test_md_dir"
     state = IngestGraphState(
         file_path=file_path,
         markdown_dir=markdown_dir

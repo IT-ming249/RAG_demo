@@ -3,7 +3,6 @@ from langgraph.runtime import Runtime
 from integrations.mineru import mineru_client
 
 
-
 async def pdf_to_md(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo]):
     writer = runtime.stream_writer
     writer(IngestGraphStepInfo(name="pdf转md", status="running"))

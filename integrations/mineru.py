@@ -76,7 +76,7 @@ class MineruIntegration:
                 logger.info(f"{batch_id} 轮询超时")
                 return None
 
-    async def download_markdown(self, full_zip_url: str, output_dir: Path) -> str | None:
+    async def download_markdown(self, full_zip_url: str, output_dir: Path) -> Path | None:
         pdf_stem = output_dir.name
         zip_file_name = Path(unquote(urlparse(full_zip_url).path)).name or f"{pdf_stem}_result.zip"
 
@@ -143,7 +143,7 @@ class MineruIntegration:
             except OSError as exc:
                 logger.warning(f"Markdown 文件重命名失败，继续使用原文件: {exc}")
 
-        return str(target_md_file.resolve())
+        return target_md_file
 
 
 mineru_client = MineruIntegration()

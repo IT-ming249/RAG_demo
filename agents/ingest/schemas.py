@@ -6,7 +6,8 @@ from pathlib import Path
 class IngestGraphState(BaseModel):
     file_path: Path
     markdown_dir: Path
-    markdown_file: str | None = None
+    markdown_file: Path | None = None
+    markdown_content: str | None = None
 
     should_continue: bool = True
     error: str | None = None
