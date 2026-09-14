@@ -3,11 +3,20 @@ from pydantic import BaseModel, field_validator, ConfigDict
 from typing import Literal
 from pathlib import Path
 
+
+class IngestMarkdownChunk(BaseModel):
+    file_name: str
+    title: str
+    chunk_content: str
+    chunk_size_index: int
+
+
 class IngestGraphState(BaseModel):
     file_path: Path
     markdown_dir: Path
     markdown_file: Path | None = None
     markdown_content: str | None = None
+    markdown_chunks: list[IngestMarkdownChunk] | None = None
 
     should_continue: bool = True
     error: str | None = None
@@ -16,6 +25,7 @@ class IngestGraphState(BaseModel):
 # Minio, Milvus对象上下文
 class IngestGraphContext(BaseModel):
     pass
+
 
 # graph中间状态记录, 用于调试
 class IngestGraphStepInfo(BaseModel):

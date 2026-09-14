@@ -1,7 +1,7 @@
-from prompts import load_prompt
+from agents.llm import llm_client
+from agents.prompts import load_prompt
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from langchain_core.prompts import PromptTemplate
-from llm import llm_client
 
 
 async def ainvoke_llm_json(prompt_name: str, kwargs: dict):
@@ -10,6 +10,7 @@ async def ainvoke_llm_json(prompt_name: str, kwargs: dict):
     chain = prompt_template | llm_client | JsonOutputParser()
     result = await chain.ainvoke(kwargs)
     return result
+
 
 async def ainvoke_llm_str(prompt_name: str, kwargs: dict):
     prompt = await load_prompt(prompt_name)
