@@ -1,6 +1,6 @@
-from pymilvus import AsyncMilvusClient, DataType, AnnSearchRequest, WeightedRanker
+from pymilvus import AsyncMilvusClient
 from conf import app_config
-from pydantic import BaseModel
+
 
 
 class MilvusClient:
