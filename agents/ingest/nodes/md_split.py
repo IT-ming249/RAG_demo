@@ -50,8 +50,8 @@ async def md_split(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo
                 markdown_chunk = IngestMarkdownChunk(
                     file_name=state.file_path.name,
                     title=title,
-                    chunk_content=chunk,
-                    chunk_size_index=index
+                    content=chunk,
+                    header_chunk_index=index
                 )
                 markdown_chunks.append(markdown_chunk)
     except Exception as e:

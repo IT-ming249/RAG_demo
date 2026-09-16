@@ -7,8 +7,8 @@ from pathlib import Path
 class IngestMarkdownChunk(BaseModel):
     file_name: str
     title: str
-    chunk_content: str
-    chunk_size_index: int
+    content: str
+    header_chunk_index: int
 
 
 class IngestGraphState(BaseModel):
