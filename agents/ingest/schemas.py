@@ -3,6 +3,8 @@ from pydantic import BaseModel, field_validator, ConfigDict
 from typing import Literal
 from pathlib import Path
 
+from repositories.milvus_repository import MilvusEntityRepository, MilvusChunkRepository
+
 
 class IngestMarkdownChunk(BaseModel):
     file_name: str
@@ -22,9 +24,13 @@ class IngestGraphState(BaseModel):
     error: str | None = None
 
 
-# Minio, Milvus对象上下文
+# Milvus对象上下文
 class IngestGraphContext(BaseModel):
-    pass
+    milvus_entity_repository: MilvusEntityRepository
+    milvus_chunk_repository: MilvusChunkRepository
+
+    # 模型在实例化时，允许从对象属性读取数据，而不只是从字典读取↓
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 # graph中间状态记录, 用于调试

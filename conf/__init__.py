@@ -2,6 +2,7 @@ from omegaconf import OmegaConf
 from pydantic import BaseModel, ConfigDict
 from pathlib import Path
 
+
 class FileLoggingConfig(BaseModel):
     enable: bool
     level: str
@@ -65,13 +66,16 @@ class LMBaseConfig(BaseModel):
 class LLMConfig(LMBaseConfig):
     pass
 
+
 class VLMConfig(LMBaseConfig):
     pass
+
 
 class BailianConfig(BaseModel):
     base_url: str
     api_key: str
     model_config = ConfigDict(from_attributes=True)
+
 
 class RAGAppConfig(BaseModel):
     mineru: MineruConfig
