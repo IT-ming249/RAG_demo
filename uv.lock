@@ -548,6 +548,27 @@ wheels = [
 ]
 
 [[package]]
+name = "dashscope"
+version = "1.27.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "certifi" },
+    { name = "cryptography" },
+    { name = "httpx" },
+    { name = "httpx-sse" },
+    { name = "requests" },
+    { name = "rich" },
+    { name = "typer" },
+    { name = "typing-extensions" },
+    { name = "websocket-client" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7f/4d/e3e3528139218da46d978628873122f63138116dfbb0f55838ea4bc5bd2b/dashscope-1.27.5.tar.gz", hash = "sha256:bf64e06eb60ffcac92d2840b7ecc72a00b81a395b23107b2727b971b8285375b", size = 1797514, upload-time = "2026-09-11T07:47:36.843Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/67/b7/6351e3d9463b8ebc6ba4ef275e205bb14b60895dc5741ad4dc7b20289101/dashscope-1.27.5-py3-none-any.whl", hash = "sha256:54581f45ec5ad930c9cc42ca572ce2d8e9d38262fe0d6157b1207462318543b3", size = 1976018, upload-time = "2026-09-11T07:47:34.548Z" },
+]
+
+[[package]]
 name = "detect-installer"
 version = "0.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2316,6 +2337,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "aiofiles" },
     { name = "asgiref" },
+    { name = "dashscope" },
     { name = "fastapi", extra = ["standard"] },
     { name = "httpx" },
     { name = "langchain" },
@@ -2337,6 +2359,7 @@ dependencies = [
 requires-dist = [
     { name = "aiofiles", specifier = ">=25.1.0" },
     { name = "asgiref", specifier = ">=3.11.1" },
+    { name = "dashscope", specifier = ">=1.27.4" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.136.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "langchain", specifier = ">=1.2.17" },

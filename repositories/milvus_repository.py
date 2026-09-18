@@ -12,12 +12,12 @@ class MilvusEntityRepository:
         self.client = client
 
     async def clear_collection(self):
-        has_collection = self.client.has_collection(self.collection_name)
+        has_collection = await self.client.has_collection(self.collection_name)
         if has_collection:
             await self.client.drop_collection(self.collection_name)
 
     async def ensure_collection(self):
-        has_collection = self.client.has_collection(self.collection_name)
+        has_collection = await self.client.has_collection(self.collection_name)
         if has_collection:
             return
         # 如果没用就创建

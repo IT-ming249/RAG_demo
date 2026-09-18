@@ -22,4 +22,5 @@ dependencies = [
     "pydantic-settings>=2.14.0",
     "pymilvus",
     "python-frontmatter>=1.1.0",
+    "dashscope>=1.27.4"
 ]
