@@ -11,6 +11,8 @@ class IngestMarkdownChunk(BaseModel):
     title: str
     content: str
     header_chunk_index: int
+    # 本块实际包含的实体名（多个用逗号拼接），由实体识别节点回填
+    entity_name: str = ""
 
 
 class IngestGraphState(BaseModel):
