@@ -59,7 +59,7 @@ async def md_split(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo
         return {"should_continue": False, "error": str(e)}
 
     writer(IngestGraphStepInfo(name="md文档分割", status="success"))
-    logger.info(markdown_chunks)
+    # logger.info(markdown_chunks)
     return {"markdown_chunks": markdown_chunks}
 
 

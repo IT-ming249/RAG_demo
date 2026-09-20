@@ -19,6 +19,7 @@ class IngestGraphState(BaseModel):
     markdown_file: Path | None = None
     markdown_content: str | None = None
     markdown_chunks: list[IngestMarkdownChunk] | None = None
+    entity_name: str | None = None
 
     should_continue: bool = True
     error: str | None = None

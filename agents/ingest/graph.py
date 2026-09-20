@@ -31,22 +31,27 @@ graph = graph_builder.compile()
 if __name__ == '__main__':
     import asyncio
 
-    # 项目根目录：本文件位于 agents/ingest/ 下，向上两级即项目根
-    project_root = Path(__file__).resolve().parents[2]
-
-    file_path = project_root / "test" / "test_file" / "USGS.Alaska-and-Landsat.pdf"
-    markdown_dir = project_root / "test" / "test_md_dir"
-    state = IngestGraphState(
-        file_path=file_path,
-        markdown_dir=markdown_dir
-    )
-    context = IngestGraphContext(
-        milvus_entity_repository=MilvusEntityRepository(milvus_client.client),
-        milvus_chunk_repository=MilvusChunkRepository(milvus_client.client)
-    )
-
 
     async def main():
+        # 项目根目录：本文件位于 agents/ingest/ 下，向上两级即项目根
+        project_root = Path(__file__).resolve().parents[2]
+
+        file_path = project_root / "test" / "test_file" / "USGS.Alaska-and-Landsat.pdf"
+        markdown_dir = project_root / "test" / "test_md_dir"
+        state = IngestGraphState(
+            file_path=file_path,
+            markdown_dir=markdown_dir
+        )
+        milvus_entity_repository = MilvusEntityRepository(milvus_client.client)
+        milvus_chunk_repository = MilvusChunkRepository(milvus_client.client)
+
+        await milvus_entity_repository.ensure_collection()
+        await milvus_chunk_repository.ensure_collection()
+        context = IngestGraphContext(
+            milvus_entity_repository=milvus_entity_repository,
+            milvus_chunk_repository=milvus_chunk_repository
+        )
+
         async for chunk in graph.astream(state, context=context, stream_mode="custom"):
             print(chunk)
 
