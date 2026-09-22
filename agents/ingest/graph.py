@@ -36,7 +36,7 @@ if __name__ == '__main__':
         # 项目根目录：本文件位于 agents/ingest/ 下，向上两级即项目根
         project_root = Path(__file__).resolve().parents[2]
 
-        file_path = project_root / "test" / "test_file" / "USGS.Alaska-and-Landsat.pdf"
+        file_path = project_root / "test" / "test_file" / "HAK180.pdf"
         markdown_dir = project_root / "test" / "test_md_dir"
         state = IngestGraphState(
             file_path=file_path,

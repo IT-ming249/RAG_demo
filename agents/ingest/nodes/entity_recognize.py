@@ -8,26 +8,6 @@ from dots.miluvs import MilvusInsertEntity
 from core.log import logger
 
 
-# 实体输出中的分隔符（全角竖线，与 recognize_entity.md 提示词一致）
-ENTITY_TYPE_SEP = "｜"
-
-
-def _extract_entity_names(entity: str) -> list[str]:
-    """
-    从实体行中提取用于文本匹配的名字。
-
-    支持两种格式：
-      - 有别名: "陆地卫星=Landsat｜PROGRAM" -> ["陆地卫星", "Landsat"]
-      - 无别名: "NASA｜ORG"                -> ["NASA"]
-    """
-    # 去掉类型后缀
-    body = entity.split(ENTITY_TYPE_SEP, 1)[0].strip()
-    if not body:
-        return []
-    # 别名与规范名都参与匹配
-    return [n.strip() for n in body.split("=") if n.strip()]
-
-
 async def entity_recognize(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo]):
     writer = runtime.stream_writer
     writer(IngestGraphStepInfo(name="实体识别", status="running"))
@@ -62,21 +42,16 @@ async def entity_recognize(state: IngestGraphState, runtime: Runtime[IngestGraph
                 )
             )
 
-        # 5. 回填每个chunk实际包含的实体名（多个用逗号拼接）
+        # 5. 回填每个chunk所属的产品名
+        #    提示词要求只提取整份文档最主要的那一个产品，因此文档内所有chunk都归属于它，
+        #    无需逐块做字符串匹配（块内可能用"该设备"等指代，匹配会大量落空）。
+        primary_product = entities[0] if entities else ""
         for chunk in state.markdown_chunks:
-            chunk_text = f"{chunk.title}\n{chunk.content}"
-            matched = []
-            for entity in entities:
-                # 从 "别名=规范名｜类型" 或 "规范名｜类型" 中提取用于匹配的名字
-                names = _extract_entity_names(entity)
-                if any(name and name in chunk_text for name in names):
-                    matched.append(entity)
-            # 去重后保持原顺序拼接
-            chunk.entity_name = ",".join(dict.fromkeys(matched))
+            chunk.entity_name = primary_product
     except Exception as e:
         writer(IngestGraphStepInfo(name="实体识别", status="failed", error=str(e)))
         return {"should_continue": False}
-    logger.info(f"entity_recognize: 共识别 {len(entities)} 个实体: {entities}")
+    logger.info(f"entity_recognize: 识别出产品 {len(entities)} 个: {entities}")
 
     writer(IngestGraphStepInfo(name="实体识别", status="success"))
     return {"entity_name": entity_names, "markdown_chunks": state.markdown_chunks}
