@@ -14,8 +14,8 @@ class QueryGraphState(BaseModel):
 
 
 class QueryGraphContext(BaseModel):
-    milvus_entity_repo: MilvusEntityRepository
-    milvus_chunk_repo: MilvusChunkRepository
+    milvus_entity_repository: MilvusEntityRepository
+    milvus_chunk_repository: MilvusChunkRepository
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 

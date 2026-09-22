@@ -8,7 +8,7 @@ from agents.ingest.nodes.md_split import md_split
 from agents.ingest.nodes.entity_recognize import entity_recognize
 from agents.ingest.nodes.text_to_embedding import text_to_embedding
 from repositories.milvus_repository import MilvusEntityRepository, MilvusChunkRepository
-from clients.miluvs import milvus_client
+from clients.milvus import milvus_client
 
 graph_builder = StateGraph(state_schema=IngestGraphState, context_schema=IngestGraphContext)
 
