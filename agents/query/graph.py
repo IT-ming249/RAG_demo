@@ -1,3 +1,5 @@
+import asyncio
+
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 
@@ -14,6 +16,7 @@ from clients.milvus import milvus_client
 from clients.postgre import postgre_client
 from repositories.milvus_repository import MilvusChunkRepository, MilvusEntityRepository
 from core.log import logger
+from core.asyncio_compat import run_async
 
 
 def build_graph_builder() -> StateGraph:
@@ -31,21 +34,21 @@ def build_graph_builder() -> StateGraph:
     graph_builder.add_node(result_fusion)
 
     graph_builder.add_edge(START, "intention_parse")
-    graph_builder.add_conditional_edges(
+    graph_builder.add_edge(
         "intention_parse",
-        lambda state: "entity_confirm" if state.should_continue else END
+        "entity_confirm"
     )
-    graph_builder.add_conditional_edges(
+    graph_builder.add_edge(
         "entity_confirm",
-        lambda state: "embedding_search" if state.should_continue else END
+        "embedding_search"
     )
-    graph_builder.add_conditional_edges(
+    graph_builder.add_edge(
         "entity_confirm",
-        lambda state: "hyde_search" if state.should_continue else END
+        "hyde_search"
     )
-    graph_builder.add_conditional_edges(
+    graph_builder.add_edge(
         "entity_confirm",
-        lambda state: "web_search" if state.should_continue else END
+        "web_search"
     )
 
     # Wait for both retrieval branches before merging their RRF scores.
@@ -63,3 +66,34 @@ async def get_graph():
     await checkpointer.setup()
     graph = graph_builder.compile(checkpointer=checkpointer)
     return graph
+
+
+if __name__ == '__main__':
+    from langchain_core.messages import HumanMessage
+
+    async def main():
+        await postgre_client.init()
+        graph = await get_graph()
+        query = "HAK 180的功能是什么，怎么使用"
+        state = QueryGraphState(
+            messages=[HumanMessage(content=query)],
+            query=query
+        )
+        milvus_entity_repository = MilvusEntityRepository(milvus_client.client)
+        milvus_chunk_repository = MilvusChunkRepository(milvus_client.client)
+
+        await milvus_entity_repository.ensure_collection()
+        await milvus_chunk_repository.ensure_collection()
+        context = QueryGraphContext(
+            milvus_entity_repository=milvus_entity_repository,
+            milvus_chunk_repository=milvus_chunk_repository
+        )
+        async for chunk in graph.astream(
+            state,
+            context=context,
+            stream_mode="custom",
+            config={"thread_id": "1"}
+        ):
+            print(chunk)
+        await postgre_client.close()
+    run_async(main())
