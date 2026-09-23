@@ -2,6 +2,7 @@ import asyncio
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 
 from agents.query.schemas import QueryGraphState, QueryGraphContext
 from agents.query.nodes.intention_parse import intention_parse
@@ -62,7 +63,13 @@ def build_graph_builder() -> StateGraph:
 
 async def get_graph():
     graph_builder = build_graph_builder()
-    checkpointer = AsyncPostgresSaver(conn=postgre_client.pool)
+    serde = JsonPlusSerializer(
+        allowed_msgpack_modules=[
+            ("dtos.milvus", "MilvusSearchEntity"),
+            # 以后 State 里再放别的自定义类型，也在这里加
+        ]
+    )
+    checkpointer = AsyncPostgresSaver(conn=postgre_client.pool, serde=serde)
     await checkpointer.setup()
     graph = graph_builder.compile(checkpointer=checkpointer)
     return graph
