@@ -2,7 +2,7 @@ from langgraph.runtime import Runtime
 
 from agents.ingest.schemas import IngestGraphState, IngestGraphContext, IngestGraphStepInfo
 from integrations.embedding import generate_texts_embeddings
-from dots.miluvs import MilvusInsertChunk
+from dtos.milvus import MilvusInsertChunk
 
 
 async def text_to_embedding(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo]):

@@ -1,7 +1,7 @@
 import json
 from pymilvus import AsyncMilvusClient, DataType, AnnSearchRequest, WeightedRanker
 
-from dots.miluvs import MilvusInsertEntity, MilvusSearchEntity, MilvusInsertChunk, MilvusSearchChunk
+from dtos.milvus import MilvusInsertEntity, MilvusSearchEntity, MilvusInsertChunk, MilvusSearchChunk
 from utils.l2_normalize import l2_normalize
 
 

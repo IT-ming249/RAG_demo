@@ -3,12 +3,16 @@ from typing import Annotated
 from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
 from typing import Literal
+
 from repositories.milvus_repository import MilvusChunkRepository, MilvusEntityRepository
+from dtos.milvus import MilvusSearchEntity, MilvusSearchChunk
 
 
 class QueryGraphState(BaseModel):
     messages: Annotated[list[BaseMessage], add_messages]
     query: str
+    rewritten_query: str | None
+    entities: list[MilvusSearchEntity] | None
     should_continue: bool = True
     error: str | None = None
 

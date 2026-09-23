@@ -1,10 +1,10 @@
 from langgraph.runtime import Runtime
 
 from agents.ingest.schemas import IngestGraphState, IngestGraphContext, IngestGraphStepInfo
-from agents.ainovke_llm import ainvoke_llm_str
+from agents.ainvoke_llm import ainvoke_llm_str
 from integrations.embedding import generate_texts_embeddings
 from repositories.milvus_repository import MilvusEntityRepository
-from dots.miluvs import MilvusInsertEntity
+from dtos.milvus import MilvusInsertEntity
 from core.log import logger
 
 

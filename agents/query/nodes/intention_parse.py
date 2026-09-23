@@ -2,7 +2,7 @@ from langgraph.runtime import Runtime
 from langchain_core.messages import BaseMessage
 
 from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryGraphStepInfo
-from agents.ainovke_llm import ainvoke_llm_json
+from agents.ainvoke_llm import ainvoke_llm_json
 from core.log import logger
 
 
