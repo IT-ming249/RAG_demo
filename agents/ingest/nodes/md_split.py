@@ -5,11 +5,11 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 
 from core.log import logger
 from vendors.markdown_chunker.chunking_strategy import MarkdownChunkingStrategy
-from agents.ingest.schemas import IngestGraphState, IngestGraphStepInfo, IngestMarkdownChunk
+from agents.ingest.schemas import IngestGraphState, IngestGraphStepInfo, IngestMarkdownChunk, IngestGraphContext
 from agents.ainvoke_llm import ainvoke_llm_str
 
 
-async def md_split(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo]):
+async def md_split(state: IngestGraphState, runtime: Runtime[IngestGraphContext]):
     writer = runtime.stream_writer
     writer(IngestGraphStepInfo(name="md文档分割", status="running"))
 

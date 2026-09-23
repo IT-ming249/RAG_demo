@@ -5,7 +5,7 @@ from integrations.embedding import generate_texts_embeddings
 from dtos.milvus import MilvusInsertChunk
 
 
-async def text_to_embedding(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo]):
+async def text_to_embedding(state: IngestGraphState, runtime: Runtime[IngestGraphContext]):
     writer = runtime.stream_writer
     writer(IngestGraphStepInfo(name="文本转嵌入向量", status="running"))
 

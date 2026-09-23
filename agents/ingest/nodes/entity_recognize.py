@@ -8,7 +8,7 @@ from dtos.milvus import MilvusInsertEntity
 from core.log import logger
 
 
-async def entity_recognize(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo]):
+async def entity_recognize(state: IngestGraphState, runtime: Runtime[IngestGraphContext]):
     writer = runtime.stream_writer
     writer(IngestGraphStepInfo(name="实体识别", status="running"))
 

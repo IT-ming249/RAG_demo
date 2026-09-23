@@ -1,9 +1,9 @@
-from agents.ingest.schemas import IngestGraphState, IngestGraphStepInfo
+from agents.ingest.schemas import IngestGraphState, IngestGraphStepInfo, IngestGraphContext
 from langgraph.runtime import Runtime
 from integrations.mineru import mineru_client
 
 
-async def pdf_to_md(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo]):
+async def pdf_to_md(state: IngestGraphState, runtime: Runtime[IngestGraphContext]):
     writer = runtime.stream_writer
     writer(IngestGraphStepInfo(name="pdf转md", status="running"))
 

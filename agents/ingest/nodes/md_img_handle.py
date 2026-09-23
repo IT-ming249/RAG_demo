@@ -12,7 +12,6 @@ from clients.minio_client import minio_client
 from agents.llm import vlm_client
 
 
-
 async def image_to_base64(image_path: Path) -> str:
     async with aiofiles.open(image_path, mode="rb") as f:
         image_data = await f.read()
@@ -28,7 +27,7 @@ async def image_to_base64(image_path: Path) -> str:
     return f"data:{mime_type};base64,{b64str}"
 
 
-async def md_img_handle(state: IngestGraphState, runtime: Runtime[IngestGraphStepInfo]):
+async def md_img_handle(state: IngestGraphState, runtime: Runtime[IngestGraphContext]):
     writer = runtime.stream_writer
     writer(IngestGraphStepInfo(name="md文件图片处理", status="running"))
 

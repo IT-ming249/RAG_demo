@@ -11,8 +11,8 @@ from dtos.milvus import MilvusSearchEntity, MilvusSearchChunk
 class QueryGraphState(BaseModel):
     messages: Annotated[list[BaseMessage], add_messages]
     query: str
-    rewritten_query: str | None
-    entities: list[MilvusSearchEntity] | None
+    rewritten_query: str | None = None
+    entities: list[MilvusSearchEntity] | None = None
     should_continue: bool = True
     error: str | None = None
 
