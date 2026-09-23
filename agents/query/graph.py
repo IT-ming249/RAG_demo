@@ -66,6 +66,7 @@ async def get_graph():
     serde = JsonPlusSerializer(
         allowed_msgpack_modules=[
             ("dtos.milvus", "MilvusSearchEntity"),
+            ("dtos.milvus", "MilvusSearchChunk"),
             # 以后 State 里再放别的自定义类型，也在这里加
         ]
     )

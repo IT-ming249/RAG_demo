@@ -61,7 +61,7 @@ async def entity_confirm(state: QueryGraphState, runtime: Runtime[QueryGraphCont
     # 筛选
     entities = list(filter(lambda entity: entity.distance > 0.65, entities))
 
-    logger.info(f"查找到的实体有：{entities}")
+    # logger.info(f"查找到的实体有：{entities}")
 
     if len(entities) == 0:
         writer(QueryGraphStepInfo(name="实体识别", status="failed", error="未找到合适产品"))

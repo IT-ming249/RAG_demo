@@ -28,7 +28,7 @@ async def embedding_search(state: QueryGraphState, runtime: Runtime[QueryGraphCo
         [sparse_vector],
         [entity.entity_name for entity in entities],
     )
-    logger.info(chunks)
+    # logger.info(chunks)
 
     writer(QueryGraphStepInfo(name="搜索向量数据库", status="success"))
     return {"embedding_chunks": chunks}

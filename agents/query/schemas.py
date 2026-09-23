@@ -13,6 +13,8 @@ class QueryGraphState(BaseModel):
     query: str
     rewritten_query: str | None = None
     entities: list[MilvusSearchEntity] | None = None
+    embedding_chunks: list[MilvusSearchChunk] | None = None
+    hyde_chunks: list[MilvusSearchChunk] | None = None
     should_continue: bool = True
     error: str | None = None
 
