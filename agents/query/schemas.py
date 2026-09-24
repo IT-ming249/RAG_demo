@@ -13,6 +13,7 @@ class QueryWebSearchChunk(BaseModel):
     content: str
     url: str
 
+
 class QueryGraphState(BaseModel):
     messages: Annotated[list[BaseMessage], add_messages]
     query: str
@@ -21,6 +22,7 @@ class QueryGraphState(BaseModel):
     embedding_chunks: list[MilvusSearchChunk] | None = None
     hyde_chunks: list[MilvusSearchChunk] | None = None
     web_chunks: list[QueryWebSearchChunk] | None = None
+    rrf_chunks: list[MilvusSearchChunk] | None = None
     should_continue: bool = True
     error: str | None = None
 

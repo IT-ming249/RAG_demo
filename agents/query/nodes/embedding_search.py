@@ -14,21 +14,25 @@ async def embedding_search(state: QueryGraphState, runtime: Runtime[QueryGraphCo
     query = state.rewritten_query
     entities = state.entities
 
-    # 1. 生成查询问题向量
-    assert query is not None
-    query_embeddings = await generate_texts_embeddings([query])
-    assert query_embeddings is not None
-    dense_vector = query_embeddings[0].get("dense")
-    sparse_vector = query_embeddings[0].get("sparse")
+    try:
+        # 1. 生成查询问题向量
+        assert query is not None
+        query_embeddings = await generate_texts_embeddings([query])
+        assert query_embeddings is not None
+        dense_vector = query_embeddings[0].get("dense")
+        sparse_vector = query_embeddings[0].get("sparse")
 
-    # 2. 向量搜索问题相关的chunks
-    milvus_chunk_repository = contex.milvus_chunk_repository
-    chunks = await milvus_chunk_repository.search_chunks(
-        [dense_vector],
-        [sparse_vector],
-        [entity.entity_name for entity in entities],
-    )
-    # logger.info(chunks)
+        # 2. 向量搜索问题相关的chunks
+        milvus_chunk_repository = contex.milvus_chunk_repository
+        chunks = await milvus_chunk_repository.search_chunks(
+            [dense_vector],
+            [sparse_vector],
+            [entity.entity_name for entity in entities],
+        )
+        # logger.info(chunks)
+    except Exception as e:
+        writer(QueryGraphStepInfo(name="搜索向量数据库", status="failed", error=str(e)))
+        return {"should_continue": False}
 
     writer(QueryGraphStepInfo(name="搜索向量数据库", status="success"))
     return {"embedding_chunks": chunks}

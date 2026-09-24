@@ -15,27 +15,32 @@ async def hyde_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext
     query = state.rewritten_query
     entities = state.entities
 
-    # 1. 大模型生成hyde
-    hyde_result = await ainvoke_llm_str("hyde_generate", {"query": query})
+    try:
+        # 1. 大模型生成hyde
+        hyde_result = await ainvoke_llm_str("hyde_generate", {"query": query})
 
-    # 2. hyde向量化
-    hyde_embedding = await generate_texts_embeddings([hyde_result])
-    assert hyde_embedding is not None
-    hyde_dense_vector = hyde_embedding[0].get("dense")
-    hyde_sparse_vector = hyde_embedding[0].get("sparse")
+        # 2. hyde向量化
+        hyde_embedding = await generate_texts_embeddings([hyde_result])
+        assert hyde_embedding is not None
+        hyde_dense_vector = hyde_embedding[0].get("dense")
+        hyde_sparse_vector = hyde_embedding[0].get("sparse")
 
-    # 3. hyde向量搜索
-    milvus_chunk_repository = contex.milvus_chunk_repository
-    chunks = await milvus_chunk_repository.search_chunks(
-        [hyde_dense_vector],
-        [hyde_sparse_vector],
-        entity_names=[entity.entity_name for entity in entities]
-    )
+        # 3. hyde向量搜索
+        milvus_chunk_repository = contex.milvus_chunk_repository
+        chunks = await milvus_chunk_repository.search_chunks(
+            [hyde_dense_vector],
+            [hyde_sparse_vector],
+            entity_names=[entity.entity_name for entity in entities]
+        )
 
-    # logger.info(f"Hyde:{hyde_result}")
-    # logger.info(f"Hyde search results: {chunks}")
+        # logger.info(f"Hyde:{hyde_result}")
+        # logger.info(f"Hyde search results: {chunks}")
 
-    writer(QueryGraphStepInfo(name="假设性文档检索", status="success"))
-    return {"hyde_chunks": chunks}
+        writer(QueryGraphStepInfo(name="假设性文档检索", status="success"))
+        return {"hyde_chunks": chunks}
+    except Exception as e:
+        writer(QueryGraphStepInfo(name="假设性文档检索", status="failed", error=str(e)))
+        return {"should_continue": False}
+
 
 
