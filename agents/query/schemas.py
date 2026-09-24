@@ -8,6 +8,11 @@ from repositories.milvus_repository import MilvusChunkRepository, MilvusEntityRe
 from dtos.milvus import MilvusSearchEntity, MilvusSearchChunk
 
 
+class QueryWebSearchChunk(BaseModel):
+    title: str
+    content: str
+    url: str
+
 class QueryGraphState(BaseModel):
     messages: Annotated[list[BaseMessage], add_messages]
     query: str
@@ -15,6 +20,7 @@ class QueryGraphState(BaseModel):
     entities: list[MilvusSearchEntity] | None = None
     embedding_chunks: list[MilvusSearchChunk] | None = None
     hyde_chunks: list[MilvusSearchChunk] | None = None
+    web_chunks: list[QueryWebSearchChunk] | None = None
     should_continue: bool = True
     error: str | None = None
 

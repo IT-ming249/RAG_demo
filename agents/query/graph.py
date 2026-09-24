@@ -29,8 +29,8 @@ def build_graph_builder() -> StateGraph:
     graph_builder.add_node(entity_confirm)
     graph_builder.add_node(embedding_search)
     graph_builder.add_node(hyde_search)
-    graph_builder.add_node(rrf_merge)
     graph_builder.add_node(web_search)
+    graph_builder.add_node(rrf_merge)
     graph_builder.add_node(chunks_rerank)
     graph_builder.add_node(result_fusion)
 

@@ -56,7 +56,7 @@ async def entity_confirm(state: QueryGraphState, runtime: Runtime[QueryGraphCont
         else:
             seen.add(item.entity_name)
 
-    # 按照distance倒序排序， distance越大相关性越大
+    # 按照distance倒序排序， 当前搜索采用的是cosine与IP算法，所以distance越大相关性越大
     entities.sort(key=lambda entity: entity.distance, reverse=True)
     # 筛选
     entities = list(filter(lambda entity: entity.distance > 0.65, entities))

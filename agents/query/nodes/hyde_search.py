@@ -32,8 +32,8 @@ async def hyde_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext
         entity_names=[entity.entity_name for entity in entities]
     )
 
-    logger.info(f"Hyde:{hyde_result}")
-    logger.info(f"Hyde search results: {chunks}")
+    # logger.info(f"Hyde:{hyde_result}")
+    # logger.info(f"Hyde search results: {chunks}")
 
     writer(QueryGraphStepInfo(name="假设性文档检索", status="success"))
     return {"hyde_chunks": chunks}
