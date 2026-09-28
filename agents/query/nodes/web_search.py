@@ -3,13 +3,14 @@ from langgraph.runtime import Runtime
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryGraphStepInfo, QueryWebSearchChunk
+from agents.query.stream_events import step_event
 from conf import app_config
 from core.log import logger
 
 
 async def web_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext]):
     writer = runtime.stream_writer
-    writer(QueryGraphStepInfo(name="联网搜索", status="running"))
+    writer(step_event(QueryGraphStepInfo(name="联网搜索", status="running")))
 
     try:
         query = state.rewritten_query
@@ -45,8 +46,8 @@ async def web_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext]
                     )
         # logger.info(f"web chunks: {web_chunks}")
 
-        writer(QueryGraphStepInfo(name="联网搜索", status="success"))
+        writer(step_event(QueryGraphStepInfo(name="联网搜索", status="success")))
         return {"web_chunks": web_chunks}
     except Exception as e:
-        writer(QueryGraphStepInfo(name="联网搜索", status="failed", error=str(e)))
+        writer(step_event(QueryGraphStepInfo(name="联网搜索", status="failed", error=str(e))))
         return {"should_continue": False}

@@ -1,13 +1,14 @@
 from langgraph.runtime import Runtime
 
 from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryGraphStepInfo
+from agents.query.stream_events import step_event
 from dtos.milvus import MilvusSearchChunk
 from core.log import logger
 
 
 async def rrf_merge(state: QueryGraphState, runtime: Runtime[QueryGraphContext]):
     writer = runtime.stream_writer
-    writer(QueryGraphStepInfo(name="RRF排序", status="running"))
+    writer(step_event(QueryGraphStepInfo(name="RRF排序", status="running")))
 
     embedding_chunks = state.embedding_chunks
     hyde_chunks = state.hyde_chunks
@@ -43,9 +44,9 @@ async def rrf_merge(state: QueryGraphState, runtime: Runtime[QueryGraphContext])
                            chunk for chunk, _ in sorted(rrf_chunks.values(), key=lambda item: item[1], reverse=True)
                        ][:10]
     except Exception as e:
-        writer(QueryGraphStepInfo(name="RRF排序", status="failed", error=str(e)))
+        writer(step_event(QueryGraphStepInfo(name="RRF排序", status="failed", error=str(e))))
         return {"should_continue": False, "error": str(e)}
 
     # logger.info(f"merge_chunks: {merge_chunks}")
-    writer(QueryGraphStepInfo(name="RRF排序", status="success"))
+    writer(step_event(QueryGraphStepInfo(name="RRF排序", status="success")))
     return {"rrf_chunks": merge_chunks}

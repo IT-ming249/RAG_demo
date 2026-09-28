@@ -3,13 +3,14 @@ from langchain_core.messages import BaseMessage, AIMessage
 
 from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryGraphStepInfo
 from agents.ainvoke_llm import ainvoke_llm_json
+from agents.query.stream_events import step_event
 from integrations.embedding import generate_texts_embeddings
 from core.log import logger
 
 
 async def entity_confirm(state: QueryGraphState, runtime: Runtime[QueryGraphContext]):
     writer = runtime.stream_writer
-    writer(QueryGraphStepInfo(name="实体识别", status="running"))
+    writer(step_event(QueryGraphStepInfo(name="实体识别", status="running")))
 
     context = runtime.context
     messages = state.messages
@@ -65,14 +66,14 @@ async def entity_confirm(state: QueryGraphState, runtime: Runtime[QueryGraphCont
         # logger.info(f"查找到的实体有：{entities}")
 
         if len(entities) == 0:
-            writer(QueryGraphStepInfo(name="实体识别", status="failed", error="未找到合适产品"))
+            writer(step_event(QueryGraphStepInfo(name="实体识别", status="failed", error="未找到合适产品")))
             return {"messages": [AIMessage(content="未找到合适产品")], "should_continue": False}
         else:
             content = f"查找到的产品名称为{[item.model_dump() for item in entities]}，改写后的问题为：{rewritten_query}"
-            writer(QueryGraphStepInfo(name="entity_confirm", status="success"))
+            writer(step_event(QueryGraphStepInfo(name="entity_confirm", status="success")))
             return {"messages": [AIMessage(content=content)], "entities": entities, "rewritten_query": rewritten_query}
     except Exception as e:
-        writer(QueryGraphStepInfo(name="entity_confirm", status="failed", error=str(e)))
+        writer(step_event(QueryGraphStepInfo(name="entity_confirm", status="failed", error=str(e))))
         return {"should_continue": False}
 
 

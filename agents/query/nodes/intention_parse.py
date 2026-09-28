@@ -3,12 +3,13 @@ from langchain_core.messages import BaseMessage
 
 from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryGraphStepInfo
 from agents.ainvoke_llm import ainvoke_llm_json
+from agents.query.stream_events import step_event
 from core.log import logger
 
 
 async def intention_parse(state: QueryGraphState, runtime: Runtime[QueryGraphContext]):
     writer = runtime.stream_writer
-    writer(QueryGraphStepInfo(name="意图识别", status="running"))
+    writer(step_event(QueryGraphStepInfo(name="意图识别", status="running")))
 
     try:
         # 历史消息，不包含最近的一条
@@ -25,5 +26,5 @@ async def intention_parse(state: QueryGraphState, runtime: Runtime[QueryGraphCon
         writer(QueryGraphStepInfo(name="意图识别", status="failed", error=str(e)))
         return {"should_continue": False}
     logger.info(f"识别结果：{result["should_continue"]}")
-    writer(QueryGraphStepInfo(name="意图识别", status="success"))
+    writer(step_event(QueryGraphStepInfo(name="意图识别", status="success")))
     return {"should_continue": result["should_continue"]}

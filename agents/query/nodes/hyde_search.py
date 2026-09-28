@@ -2,13 +2,14 @@ from langgraph.runtime import Runtime
 
 from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryGraphStepInfo
 from agents.ainvoke_llm import ainvoke_llm_str
+from agents.query.stream_events import step_event
 from integrations.embedding import generate_texts_embeddings
 from core.log import logger
 
 
 async def hyde_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext]):
     writer = runtime.stream_writer
-    writer(QueryGraphStepInfo(name="假性文档检索", status="running"))
+    writer(step_event(QueryGraphStepInfo(name="假性文档检索", status="running")))
 
     contex = runtime.context
 
@@ -36,10 +37,10 @@ async def hyde_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext
         # logger.info(f"Hyde:{hyde_result}")
         # logger.info(f"Hyde search results: {chunks}")
 
-        writer(QueryGraphStepInfo(name="假设性文档检索", status="success"))
+        writer(step_event(QueryGraphStepInfo(name="假设性文档检索", status="success")))
         return {"hyde_chunks": chunks}
     except Exception as e:
-        writer(QueryGraphStepInfo(name="假设性文档检索", status="failed", error=str(e)))
+        writer(step_event(QueryGraphStepInfo(name="假设性文档检索", status="failed", error=str(e))))
         return {"should_continue": False}
 
 

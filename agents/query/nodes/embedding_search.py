@@ -1,13 +1,14 @@
 from langgraph.runtime import Runtime
 
 from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryGraphStepInfo
+from agents.query.stream_events import step_event
 from integrations.embedding import generate_texts_embeddings
 from core.log import logger
 
 
 async def embedding_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext]):
     writer = runtime.stream_writer
-    writer(QueryGraphStepInfo(name="搜索向量数据库", status="running"))
+    writer(step_event(QueryGraphStepInfo(name="搜索向量数据库", status="running")))
 
     contex = runtime.context
 
@@ -31,9 +32,9 @@ async def embedding_search(state: QueryGraphState, runtime: Runtime[QueryGraphCo
         )
         # logger.info(chunks)
     except Exception as e:
-        writer(QueryGraphStepInfo(name="搜索向量数据库", status="failed", error=str(e)))
+        writer(step_event(QueryGraphStepInfo(name="搜索向量数据库", status="failed", error=str(e))))
         return {"should_continue": False}
 
-    writer(QueryGraphStepInfo(name="搜索向量数据库", status="success"))
+    writer(step_event(QueryGraphStepInfo(name="搜索向量数据库", status="success")))
     return {"embedding_chunks": chunks}
 
