@@ -4,7 +4,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 
-from agents.query.schemas import QueryGraphState, QueryGraphContext
+from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryWebSearchChunk
 from agents.query.nodes.intention_parse import intention_parse
 from agents.query.nodes.entity_confirm import entity_confirm
 from agents.query.nodes.embedding_search import embedding_search
@@ -67,6 +67,7 @@ async def get_graph():
         allowed_msgpack_modules=[
             ("dtos.milvus", "MilvusSearchEntity"),
             ("dtos.milvus", "MilvusSearchChunk"),
+            ("agents.query.schemas", "QueryWebSearchChunk"),
             # 以后 State 里再放别的自定义类型，也在这里加
         ]
     )

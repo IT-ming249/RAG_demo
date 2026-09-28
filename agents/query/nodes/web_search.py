@@ -43,7 +43,7 @@ async def web_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext]
                             url=url
                         )
                     )
-        logger.info(f"web chunks: {web_chunks}")
+        # logger.info(f"web chunks: {web_chunks}")
 
         writer(QueryGraphStepInfo(name="web_search", status="success"))
         return {"web_chunks": web_chunks}
