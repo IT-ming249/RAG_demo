@@ -46,6 +46,6 @@ async def rrf_merge(state: QueryGraphState, runtime: Runtime[QueryGraphContext])
         writer(QueryGraphStepInfo(name="RRF排序", status="failed", error=str(e)))
         return {"should_continue": False, "error": str(e)}
 
-    logger.info(f"merge_chunks: {merge_chunks}")
+    # logger.info(f"merge_chunks: {merge_chunks}")
     writer(QueryGraphStepInfo(name="RRF排序", status="success"))
     return {"rrf_chunks": merge_chunks}

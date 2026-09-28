@@ -6,6 +6,7 @@ from typing import Literal
 
 from repositories.milvus_repository import MilvusChunkRepository, MilvusEntityRepository
 from dtos.milvus import MilvusSearchEntity, MilvusSearchChunk
+from dtos.rerank import ReRankedChunk
 
 
 class QueryWebSearchChunk(BaseModel):
@@ -23,6 +24,7 @@ class QueryGraphState(BaseModel):
     hyde_chunks: list[MilvusSearchChunk] | None = None
     web_chunks: list[QueryWebSearchChunk] | None = None
     rrf_chunks: list[MilvusSearchChunk] | None = None
+    reranked_chunks: list[ReRankedChunk] | None = None
     should_continue: bool = True
     error: str | None = None
 

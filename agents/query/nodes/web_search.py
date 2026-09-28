@@ -45,8 +45,8 @@ async def web_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext]
                     )
         # logger.info(f"web chunks: {web_chunks}")
 
-        writer(QueryGraphStepInfo(name="web_search", status="success"))
+        writer(QueryGraphStepInfo(name="联网搜索", status="success"))
         return {"web_chunks": web_chunks}
     except Exception as e:
-        writer(QueryGraphStepInfo(name="web_search", status="failed", error=str(e)))
+        writer(QueryGraphStepInfo(name="联网搜索", status="failed", error=str(e)))
         return {"should_continue": False}
