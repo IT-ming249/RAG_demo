@@ -68,6 +68,7 @@ async def get_graph():
             ("dtos.milvus", "MilvusSearchEntity"),
             ("dtos.milvus", "MilvusSearchChunk"),
             ("agents.query.schemas", "QueryWebSearchChunk"),
+            ('dtos.rerank', 'ReRankedChunk')
             # 以后 State 里再放别的自定义类型，也在这里加
         ]
     )
