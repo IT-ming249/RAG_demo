@@ -49,6 +49,7 @@ async def md_split(state: IngestGraphState, runtime: Runtime[IngestGraphContext]
             for index, chunk in enumerate(chunks):
                 markdown_chunk = IngestMarkdownChunk(
                     file_name=state.file_path.name,
+                    file_url=state.file_url,
                     title=title,
                     content=chunk,
                     header_chunk_index=index

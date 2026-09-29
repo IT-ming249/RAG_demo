@@ -1,9 +1,9 @@
 from langgraph.runtime import Runtime
 from langchain_core.messages import AIMessage
 
-from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryGraphStepInfo
+from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryGraphStepInfo, QuerySourceInfo
 from agents.ainvoke_llm import astream_llm_str
-from agents.query.stream_events import step_event, answer_delta_event
+from agents.query.stream_events import step_event, answer_delta_event, sources_event
 from core.log import logger
 
 
@@ -15,7 +15,17 @@ async def result_fusion(state: QueryGraphState, runtime: Runtime[QueryGraphConte
     assert reranked_chunks is not None
     messages = state.messages
 
+    sources: list[QuerySourceInfo] = [
+        QuerySourceInfo(
+            title=(chunk.title if chunk.source == "web" else chunk.file_name) or "",
+            url=(chunk.url if chunk.source == "web" else chunk.file_url) or "",
+            source="web" if chunk.source == "web" else "file"
+        )
+        for chunk in reranked_chunks
+    ]
+    writer(sources_event(sources))
     final_answer = ""
+
     async for delta in astream_llm_str(
         "result_fusion",
             {
@@ -26,7 +36,7 @@ async def result_fusion(state: QueryGraphState, runtime: Runtime[QueryGraphConte
             }
     ):
         final_answer += delta
-        writer(answer_delta_event(delta=delta))
+        # writer(answer_delta_event(delta=delta))
 
     writer(step_event(QueryGraphStepInfo(name="结果融合", status="success")))
 

@@ -31,6 +31,7 @@ async def text_to_embedding(state: IngestGraphState, runtime: Runtime[IngestGrap
         await milvus_chunk_repository.add_chunks([
             MilvusInsertChunk(
                 file_name=chunk.file_name,
+                file_url=chunk.file_url,
                 title=chunk.title,
                 content=chunk.content,
                 header_chunk_index=chunk.header_chunk_index,

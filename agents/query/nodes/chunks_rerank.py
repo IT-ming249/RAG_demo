@@ -23,6 +23,7 @@ async def chunks_rerank(state: QueryGraphState, runtime: Runtime[QueryGraphConte
             title=rrf_chunk.title,
             content=rrf_chunk.content,
             file_name=rrf_chunk.file_name,
+            file_url=rrf_chunk.file_url,
             chunk_id=rrf_chunk.id,
             source="embedding"
         ))

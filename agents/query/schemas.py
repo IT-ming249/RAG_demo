@@ -40,3 +40,10 @@ class QueryGraphStepInfo(BaseModel):
     name: str
     status: Literal['running', 'success', 'failed']
     error: str | None = None
+
+
+class QuerySourceInfo(BaseModel):
+    # 标题：如果是file，此时title=file_name，如果是web，此时title=web title
+    title: str
+    url: str
+    source: Literal['web', 'file']

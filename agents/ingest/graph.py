@@ -39,6 +39,7 @@ if __name__ == '__main__':
         file_path = project_root / "test" / "test_file" / "HAK180.pdf"
         markdown_dir = project_root / "test" / "test_md_dir"
         state = IngestGraphState(
+            file_url="https://hao123.com",
             file_path=file_path,
             markdown_dir=markdown_dir
         )

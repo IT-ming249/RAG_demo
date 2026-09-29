@@ -8,6 +8,7 @@ from repositories.milvus_repository import MilvusEntityRepository, MilvusChunkRe
 
 class IngestMarkdownChunk(BaseModel):
     file_name: str
+    file_url: str
     title: str
     content: str
     header_chunk_index: int
@@ -16,6 +17,7 @@ class IngestMarkdownChunk(BaseModel):
 
 
 class IngestGraphState(BaseModel):
+    file_url: str
     file_path: Path
     markdown_dir: Path
     markdown_file: Path | None = None

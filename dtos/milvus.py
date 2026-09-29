@@ -16,6 +16,7 @@ class MilvusSearchEntity(BaseModel):
 
 
 class MilvusInsertChunk(BaseModel):
+    file_url: str
     file_name: str
     title: str
     content: str
@@ -32,3 +33,4 @@ class MilvusSearchChunk(BaseModel):
     content: str
     entity_name: str
     file_name: str
+    file_url: str

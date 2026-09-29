@@ -132,6 +132,8 @@ class MilvusChunkRepository:
         schema = self.client.create_schema(auto_id=True, enable_dynamic_field=True)
         # 主键
         schema.add_field(field_name="id", datatype=DataType.INT64, is_primary=True, auto_id=True)
+        # 文件url
+        schema.add_field(field_name="file_url", datatype=DataType.VARCHAR, max_length=1024)
         # 文件名
         schema.add_field(field_name="file_name", datatype=DataType.VARCHAR, max_length=255)
         # 标题
@@ -214,7 +216,7 @@ class MilvusChunkRepository:
             reqs=[dense_request, sparse_request],
             ranker=ranker,
             limit=limit,
-            output_fields=['id', "title", "content", "entity_name", "file_name"]
+            output_fields=['id', "title", "content", "entity_name", "file_name", "file_url"]
         )
         items: list[MilvusSearchChunk] = []
         for chunks in result:
@@ -226,7 +228,8 @@ class MilvusChunkRepository:
                         title=chunk['entity']['title'],
                         content=chunk['entity']['content'],
                         entity_name=chunk['entity']['entity_name'],
-                        file_name=chunk['entity']['file_name']
+                        file_name=chunk['entity']['file_name'],
+                        file_url=chunk['entity']['file_url'],
                     )
                 )
         return items
