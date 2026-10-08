@@ -1,5 +1,8 @@
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 from contextlib import asynccontextmanager
 
@@ -8,6 +11,9 @@ from apis.query_router import router as query_router
 from clients.postgre import postgre_client
 from repositories.milvus_repository import MilvusEntityRepository, MilvusChunkRepository
 from clients.milvus import milvus_client
+
+TEMPLATE_DIR = Path(__file__).parent / "templates"
+STATIC_DIR = Path(__file__).parent / "static"
 
 
 @asynccontextmanager
@@ -32,6 +38,19 @@ app.add_middleware(
 
 app.include_router(ingest_router, prefix="/api/ingest", tags=["文档提取"])
 app.include_router(query_router, prefix="/api/query", tags=["搜索"])
+
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+@app.get("/", response_class=HTMLResponse)
+async def index():
+    html_path = TEMPLATE_DIR / "ingest.html"
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+
+@app.get("/query", response_class=HTMLResponse)
+async def query():
+    html_path = TEMPLATE_DIR / "query.html"
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True, loop="asyncio", port=15236)
