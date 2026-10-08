@@ -35,9 +35,9 @@ def build_graph_builder() -> StateGraph:
     graph_builder.add_node(result_fusion)
 
     graph_builder.add_edge(START, "intention_parse")
-    graph_builder.add_edge(
+    graph_builder.add_conditional_edges(
         "intention_parse",
-        "entity_confirm"
+        lambda state: "entity_confirm" if state.should_continue else END
     )
     graph_builder.add_edge(
         "entity_confirm",

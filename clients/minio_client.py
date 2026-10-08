@@ -36,7 +36,7 @@ class RAGMinioClient:
         self.client.set_bucket_policy(self.bucket_name, json.dumps(bucket_policy))
 
     async def upload_file(self, file_path: str, object_name: str) -> str:
-        #nafput_object = sync_to_async(self.client.fput_object)
+        # nafput_object = sync_to_async(self.client.fput_object)
         # await afput_object(self.bucket_name, object_name, file_path)
         await sync_to_async(self.client.fput_object)(self.bucket_name, object_name, file_path)
         return f"http://{app_config.minio.endpoint}/{self.bucket_name}/{object_name}"
