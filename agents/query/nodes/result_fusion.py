@@ -36,7 +36,7 @@ async def result_fusion(state: QueryGraphState, runtime: Runtime[QueryGraphConte
             }
     ):
         final_answer += delta
-        # writer(answer_delta_event(delta=delta))
+        writer(answer_delta_event(delta=delta))
 
     writer(step_event(QueryGraphStepInfo(name="结果融合", status="success")))
 
