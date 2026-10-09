@@ -18,12 +18,14 @@ router = APIRouter()
 class QueryData(BaseModel):
     question: str = Field(..., description="用户提问的内容", min_length=1)
     thread_id: str | None = Field(None, description="会话id, 不传则创建新的")
+    enable_web_search: bool = Field(False, description="是否启用联网搜索")
 
 
-async def _envent_stream(question: str, thread_id: str):
+async def _envent_stream(question: str, thread_id: str, enable_web_search: bool):
     state = QueryGraphState(
         messages=[HumanMessage(content=question)],
-        query=question
+        query=question,
+        enable_web_search=enable_web_search,
     )
     context = QueryGraphContext(
         milvus_chunk_repository=MilvusChunkRepository(milvus_client.client),
@@ -54,7 +56,7 @@ async def query(data: QueryData):
     if thread_id is None:
         thread_id = uuid.uuid4().hex
     return StreamingResponse(
-        _envent_stream(data.question, thread_id),
+        _envent_stream(data.question, thread_id, data.enable_web_search),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

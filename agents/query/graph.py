@@ -39,17 +39,23 @@ def build_graph_builder() -> StateGraph:
         "intention_parse",
         lambda state: "entity_confirm" if state.should_continue else END
     )
-    graph_builder.add_edge(
+    # entity_confirm 失败（未识别到实体 / 检索无匹配产品）时直接结束，
+    # 避免三路检索拿到空实体后全部失败、并发写入 should_continue 而报错。
+    # 返回 list 表示并行执行三个分支；失败时走 END，rrf_merge 的 join 不会被阻塞。
+    # 注意：path_map 必须用 dict 且包含 END，否则跳过分支时会抛 KeyError('__end__')。
+    graph_builder.add_conditional_edges(
         "entity_confirm",
-        "embedding_search"
-    )
-    graph_builder.add_edge(
-        "entity_confirm",
-        "hyde_search"
-    )
-    graph_builder.add_edge(
-        "entity_confirm",
-        "web_search"
+        lambda state: (
+            ["embedding_search", "hyde_search", "web_search"]
+            if state.should_continue
+            else END
+        ),
+        {
+            "embedding_search": "embedding_search",
+            "hyde_search": "hyde_search",
+            "web_search": "web_search",
+            END: END,
+        },
     )
 
     # Wait for both retrieval branches before merging their RRF scores.

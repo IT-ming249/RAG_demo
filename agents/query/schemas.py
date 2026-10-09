@@ -18,6 +18,8 @@ class QueryWebSearchChunk(BaseModel):
 class QueryGraphState(BaseModel):
     messages: Annotated[list[BaseMessage], add_messages]
     query: str
+    # 是否启用联网搜索（由前端开关控制，默认关闭）
+    enable_web_search: bool = False
     rewritten_query: str | None = None
     entities: list[MilvusSearchEntity] | None = None
     embedding_chunks: list[MilvusSearchChunk] | None = None

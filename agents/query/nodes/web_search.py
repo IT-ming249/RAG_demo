@@ -10,6 +10,14 @@ from core.log import logger
 
 async def web_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext]):
     writer = runtime.stream_writer
+
+    # 开关关闭时跳过联网搜索。
+    # 注意：必须返回 web_chunks=[]（而不是 None），
+    # 因为 rrf_merge 之后的下游节点会遍历该字段。
+    if not state.enable_web_search:
+        writer(step_event(QueryGraphStepInfo(name="联网搜索", status="success")))
+        return {"web_chunks": []}
+
     writer(step_event(QueryGraphStepInfo(name="联网搜索", status="running")))
 
     try:
