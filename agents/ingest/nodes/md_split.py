@@ -80,7 +80,7 @@ async def md_split(state: IngestGraphState, runtime: Runtime[IngestGraphContext]
 
             # 讲表格转换为自然语言
             if _has_table(content):
-                content = _table_to_natural_language(content)
+                content = await _table_to_natural_language(content)
 
             chunks = strategy.chunk_markdown(content)
             for index, chunk in enumerate(chunks):
