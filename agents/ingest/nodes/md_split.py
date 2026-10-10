@@ -1,5 +1,5 @@
 import json
-
+import re
 from langgraph.runtime import Runtime
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 
@@ -7,6 +7,39 @@ from core.log import logger
 from vendors.markdown_chunker.chunking_strategy import MarkdownChunkingStrategy
 from agents.ingest.schemas import IngestGraphState, IngestGraphStepInfo, IngestMarkdownChunk, IngestGraphContext
 from agents.ainvoke_llm import ainvoke_llm_str
+
+# 匹配 Markdown 表格的表头行 + 分隔符行模式
+_PATTERN_MD_TABLE = re.compile(r"^\|.+\|$")
+_PATTERN_MD_TABLE_SEP = re.compile(r"^\|(\s*[-:]+\s*\|)+$")
+# 匹配 HTML 表格标签（<table>, <tr>, <td>, <th>）
+_PATTERN_HTML_TABLE = re.compile(r"<(/?(?:table|tr|t[dh])\b[^>]*>)", re.IGNORECASE)
+
+
+def _has_table(content: str) -> bool:
+    """检查内容中是否包含表格（Markdown 表格或 HTML 表格标签）"""
+    # 1. 检测 Markdown 表格：表头行 + 分隔符行模式
+    lines = content.splitlines()
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if _PATTERN_MD_TABLE.match(stripped):
+            if i + 1 < len(lines) and _PATTERN_MD_TABLE_SEP.match(lines[i + 1].strip()):
+                return True
+
+    # 2. 检测 HTML 表格标签：<table>, <tr>, <td>, <th>
+    if _PATTERN_HTML_TABLE.search(content):
+        return True
+
+    return False
+
+
+async def _table_to_natural_language(content: str) -> str:
+    """调用 LLM 将内容中的表格（Markdown 或 HTML）转换为自然语言描述，替换原表格"""
+    try:
+        result = await ainvoke_llm_str("table_to_text", {"content": content})
+        return result
+    except Exception as e:
+        logger.warning(f"表格转自然语言失败，保留原始内容: {e}")
+        return content
 
 
 async def md_split(state: IngestGraphState, runtime: Runtime[IngestGraphContext]):
@@ -44,6 +77,10 @@ async def md_split(state: IngestGraphState, runtime: Runtime[IngestGraphContext]
             # 处理内容
             raw_content = header_chunk.page_content
             content = raw_content.replace("\r\n", "\n").replace("\r", "\n")
+
+            # 讲表格转换为自然语言
+            if _has_table(content):
+                content = _table_to_natural_language(content)
 
             chunks = strategy.chunk_markdown(content)
             for index, chunk in enumerate(chunks):

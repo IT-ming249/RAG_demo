@@ -49,7 +49,7 @@ async def chunks_rerank(state: QueryGraphState, runtime: Runtime[QueryGraphConte
     max_topk = 10
     min_topk = 1
     max_abs_gap = 0.5  # 最大分差绝对值
-    max_ratio_gap = 0.25  # 最大分差比例
+    max_ratio_gap = 0.5  # 最大分差比例
 
     k = 0
     for index in range(0, len(reranked_chunks) - 1):
