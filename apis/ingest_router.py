@@ -10,7 +10,7 @@ from core.log import logger
 from clients.minio_client import minio_client
 from agents.ingest.graph import graph
 from agents.ingest.schemas import IngestGraphState, IngestGraphContext, IngestGraphStepInfo
-from repositories.milvus_repository import MilvusEntityRepository, MilvusChunkRepository
+from repositories.milvus_repository import MilvusProductRepository, MilvusChunkRepository
 from clients.milvus import milvus_client
 
 
@@ -34,7 +34,7 @@ async def _event_stream(
             markdown_dir=markdown_dir
         )
         context = IngestGraphContext(
-            milvus_entity_repository=MilvusEntityRepository(milvus_client.client),
+            milvus_product_repository=MilvusProductRepository(milvus_client.client),
             milvus_chunk_repository=MilvusChunkRepository(milvus_client.client)
         )
         async for chunk in graph.astream(state, context=context, stream_mode="custom"):

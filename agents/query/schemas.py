@@ -4,8 +4,8 @@ from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
 from typing import Literal
 
-from repositories.milvus_repository import MilvusChunkRepository, MilvusEntityRepository
-from dtos.milvus import MilvusSearchEntity, MilvusSearchChunk
+from repositories.milvus_repository import MilvusChunkRepository, MilvusProductRepository
+from dtos.milvus import MilvusSearchProduct, MilvusSearchChunk
 from dtos.rerank import ReRankedChunk
 
 
@@ -21,7 +21,7 @@ class QueryGraphState(BaseModel):
     # 是否启用联网搜索（由前端开关控制，默认关闭）
     enable_web_search: bool = False
     rewritten_query: str | None = None
-    entities: list[MilvusSearchEntity] | None = None
+    products: list[MilvusSearchProduct] | None = None
     embedding_chunks: list[MilvusSearchChunk] | None = None
     hyde_chunks: list[MilvusSearchChunk] | None = None
     web_chunks: list[QueryWebSearchChunk] | None = None
@@ -32,7 +32,7 @@ class QueryGraphState(BaseModel):
 
 
 class QueryGraphContext(BaseModel):
-    milvus_entity_repository: MilvusEntityRepository
+    milvus_product_repository: MilvusProductRepository
     milvus_chunk_repository: MilvusChunkRepository
 
     model_config = ConfigDict(arbitrary_types_allowed=True)

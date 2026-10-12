@@ -6,7 +6,7 @@ from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 
 from agents.query.schemas import QueryGraphState, QueryGraphContext, QueryWebSearchChunk
 from agents.query.nodes.intention_parse import intention_parse
-from agents.query.nodes.entity_confirm import entity_confirm
+from agents.query.nodes.product_confirm import product_confirm
 from agents.query.nodes.embedding_search import embedding_search
 from agents.query.nodes.hyde_search import hyde_search
 from agents.query.nodes.rrf_merge import rrf_merge
@@ -15,7 +15,7 @@ from agents.query.nodes.result_fusion import result_fusion
 from agents.query.nodes.chunks_rerank import chunks_rerank
 from clients.milvus import milvus_client
 from clients.postgre import postgre_client
-from repositories.milvus_repository import MilvusChunkRepository, MilvusEntityRepository
+from repositories.milvus_repository import MilvusChunkRepository, MilvusProductRepository
 from core.log import logger
 from core.asyncio_compat import run_async
 
@@ -26,7 +26,7 @@ def build_graph_builder() -> StateGraph:
         context_schema=QueryGraphContext
     )
     graph_builder.add_node(intention_parse)
-    graph_builder.add_node(entity_confirm)
+    graph_builder.add_node(product_confirm)
     graph_builder.add_node(embedding_search)
     graph_builder.add_node(hyde_search)
     graph_builder.add_node(web_search)
@@ -37,14 +37,14 @@ def build_graph_builder() -> StateGraph:
     graph_builder.add_edge(START, "intention_parse")
     graph_builder.add_conditional_edges(
         "intention_parse",
-        lambda state: "entity_confirm" if state.should_continue else END
+        lambda state: "product_confirm" if state.should_continue else END
     )
-    # entity_confirm 失败（未识别到实体 / 检索无匹配产品）时直接结束，
-    # 避免三路检索拿到空实体后全部失败、并发写入 should_continue 而报错。
+    # product_confirm 失败（未识别到产品 / 检索无匹配产品）时直接结束，
+    # 避免三路检索拿到空产品后全部失败、并发写入 should_continue 而报错。
     # 返回 list 表示并行执行三个分支；失败时走 END，rrf_merge 的 join 不会被阻塞。
     # 注意：path_map 必须用 dict 且包含 END，否则跳过分支时会抛 KeyError('__end__')。
     graph_builder.add_conditional_edges(
-        "entity_confirm",
+        "product_confirm",
         lambda state: (
             ["embedding_search", "hyde_search", "web_search"]
             if state.should_continue
@@ -71,7 +71,7 @@ async def get_graph():
     graph_builder = build_graph_builder()
     serde = JsonPlusSerializer(
         allowed_msgpack_modules=[
-            ("dtos.milvus", "MilvusSearchEntity"),
+            ("dtos.milvus", "MilvusSearchProduct"),
             ("dtos.milvus", "MilvusSearchChunk"),
             ("agents.query.schemas", "QueryWebSearchChunk"),
             ('dtos.rerank', 'ReRankedChunk')
@@ -95,13 +95,13 @@ if __name__ == '__main__':
             messages=[HumanMessage(content=query)],
             query=query
         )
-        milvus_entity_repository = MilvusEntityRepository(milvus_client.client)
+        milvus_product_repository = MilvusProductRepository(milvus_client.client)
         milvus_chunk_repository = MilvusChunkRepository(milvus_client.client)
 
-        await milvus_entity_repository.ensure_collection()
+        await milvus_product_repository.ensure_collection()
         await milvus_chunk_repository.ensure_collection()
         context = QueryGraphContext(
-            milvus_entity_repository=milvus_entity_repository,
+            milvus_product_repository=milvus_product_repository,
             milvus_chunk_repository=milvus_chunk_repository
         )
         async for chunk in graph.astream(

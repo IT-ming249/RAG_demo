@@ -31,7 +31,7 @@ async def result_fusion(state: QueryGraphState, runtime: Runtime[QueryGraphConte
             {
                 "chunks": [chunk.model_dump() for chunk in reranked_chunks],
                 "messages": [{"role": message.type, "content": message.content} for message in messages],
-                "entity_names": [entity.entity_name for entity in state.entities],
+                "product_names": [product.product_name for product in state.products],
                 "query": state.rewritten_query,
             }
     ):

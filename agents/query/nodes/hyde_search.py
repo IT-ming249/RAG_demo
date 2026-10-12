@@ -14,7 +14,7 @@ async def hyde_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext
     contex = runtime.context
 
     query = state.rewritten_query
-    entities = state.entities
+    products = state.products
 
     try:
         # 1. 大模型生成hyde
@@ -31,7 +31,7 @@ async def hyde_search(state: QueryGraphState, runtime: Runtime[QueryGraphContext
         chunks = await milvus_chunk_repository.search_chunks(
             [hyde_dense_vector],
             [hyde_sparse_vector],
-            entity_names=[entity.entity_name for entity in entities]
+            product_names=[product.product_name for product in products]
         )
 
         # logger.info(f"Hyde:{hyde_result}")

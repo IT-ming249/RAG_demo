@@ -35,7 +35,7 @@ async def text_to_embedding(state: IngestGraphState, runtime: Runtime[IngestGrap
                 title=chunk.title,
                 content=chunk.content,
                 header_chunk_index=chunk.header_chunk_index,
-                entity_name=chunk.entity_name,  # 本块包含的实体（多个逗号拼接）
+                product_name=chunk.product_name,  # 本块包含的产品（多个逗号拼接）
                 dense_vector=embedding[0],  # 稠密向量
                 sparse_vector=embedding[1]  # 稀疏向量
             )

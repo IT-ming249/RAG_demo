@@ -9,7 +9,7 @@ import json
 from agents.query.graph import get_graph
 from agents.query.schemas import QueryGraphState, QueryGraphContext
 from clients.milvus import milvus_client
-from repositories.milvus_repository import MilvusChunkRepository, MilvusEntityRepository
+from repositories.milvus_repository import MilvusChunkRepository, MilvusProductRepository
 from core.log import logger
 
 router = APIRouter()
@@ -29,7 +29,7 @@ async def _envent_stream(question: str, thread_id: str, enable_web_search: bool)
     )
     context = QueryGraphContext(
         milvus_chunk_repository=MilvusChunkRepository(milvus_client.client),
-        milvus_entity_repository=MilvusEntityRepository(milvus_client.client)
+        milvus_product_repository=MilvusProductRepository(milvus_client.client)
     )
 
     graph = await get_graph()

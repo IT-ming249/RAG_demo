@@ -53,7 +53,7 @@ from langchain_core.messages import HumanMessage
 from conf import app_config
 from agents.query.graph import build_graph_builder
 from agents.query.schemas import QueryGraphState, QueryGraphContext
-from repositories.milvus_repository import MilvusChunkRepository, MilvusEntityRepository
+from repositories.milvus_repository import MilvusChunkRepository, MilvusProductRepository
 from clients.milvus import milvus_client
 from integrations.embedding import generate_texts_embeddings
 from core.asyncio_compat import run_async
@@ -161,10 +161,10 @@ async def run_query_pipeline(
         messages=[HumanMessage(content=question)],
         query=question,
     )
-    entity_repo = MilvusEntityRepository(milvus_client.client)
+    product_repo = MilvusProductRepository(milvus_client.client)
     chunk_repo = MilvusChunkRepository(milvus_client.client)
     context_obj = QueryGraphContext(
-        milvus_entity_repository=entity_repo,
+        milvus_product_repository=product_repo,
         milvus_chunk_repository=chunk_repo,
     )
 

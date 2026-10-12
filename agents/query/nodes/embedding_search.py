@@ -13,7 +13,7 @@ async def embedding_search(state: QueryGraphState, runtime: Runtime[QueryGraphCo
     contex = runtime.context
 
     query = state.rewritten_query
-    entities = state.entities
+    products = state.products
 
     try:
         # 1. 生成查询问题向量
@@ -28,7 +28,7 @@ async def embedding_search(state: QueryGraphState, runtime: Runtime[QueryGraphCo
         chunks = await milvus_chunk_repository.search_chunks(
             [dense_vector],
             [sparse_vector],
-            [entity.entity_name for entity in entities],
+            [product.product_name for product in products],
         )
         # logger.info(chunks)
     except Exception as e:

@@ -1,12 +1,12 @@
 import json
 from pymilvus import AsyncMilvusClient, DataType, AnnSearchRequest, WeightedRanker
 
-from dtos.milvus import MilvusInsertEntity, MilvusSearchEntity, MilvusInsertChunk, MilvusSearchChunk
+from dtos.milvus import MilvusInsertProduct, MilvusSearchProduct, MilvusInsertChunk, MilvusSearchChunk
 from utils.l2_normalize import l2_normalize
 
 
-class MilvusEntityRepository:
-    collection_name = "entity_collection"
+class MilvusProductRepository:
+    collection_name = "product_collection"
 
     def __init__(self, client: AsyncMilvusClient):
         self.client = client
@@ -26,8 +26,8 @@ class MilvusEntityRepository:
         schema.add_field(field_name="id", datatype=DataType.INT64, is_primary=True, auto_id=True)
         # 文件名
         schema.add_field(field_name="file_name", datatype=DataType.VARCHAR, max_length=255)
-        # 实体名
-        schema.add_field(field_name="entity_name", datatype=DataType.VARCHAR, max_length=65535)
+        # 产品名
+        schema.add_field(field_name="product_name", datatype=DataType.VARCHAR, max_length=65535)
         # 稠密向量
         schema.add_field(field_name="dense_vector", datatype=DataType.FLOAT_VECTOR, dim=1024)
         # 稀疏向量
@@ -65,26 +65,26 @@ class MilvusEntityRepository:
         await self.client.create_collection(collection_name=self.collection_name, schema=schema,
                                             index_params=index_params)
 
-    async def add_entity(self, entity: MilvusInsertEntity):
-        # 先删除同名实体
+    async def add_product(self, product: MilvusInsertProduct):
+        # 先删除同名产品
         await self.client.delete(
             self.collection_name,
-            filter=f'file_name == "{entity.file_name}" && entity_name == "{entity.entity_name}"'
+            filter=f'file_name == "{product.file_name}" && product_name == "{product.product_name}"'
         )
         # 对稀疏向量做归一化处理
-        entity.sparse_vector = {
+        product.sparse_vector = {
             k: v
-            for k, v in zip(entity.sparse_vector.keys(), l2_normalize(list(entity.sparse_vector.values())))
+            for k, v in zip(product.sparse_vector.keys(), l2_normalize(list(product.sparse_vector.values())))
         }
-        # 将entity添加到Milvus中
-        await self.client.insert(self.collection_name, data=[entity.model_dump()])
+        # 将product添加到Milvus中
+        await self.client.insert(self.collection_name, data=[product.model_dump()])
         # 强制加载
         await self.client.load_collection(self.collection_name)
 
-    async def search_entity(self,
+    async def search_product(self,
                             dense_vectors: list[list[float]],
                             sparse_vectors: list[dict[int, float]],
-                            limit=5) -> list[MilvusSearchEntity]:
+                            limit=5) -> list[MilvusSearchProduct]:
         # 构建稠密向量搜索请求
         dense_request = AnnSearchRequest(
             data=dense_vectors,
@@ -105,16 +105,16 @@ class MilvusEntityRepository:
             reqs=[dense_request, sparse_request],
             ranker=ranker,
             limit=limit,
-            output_fields=['entity_name']
+            output_fields=['product_name']
         )
 
-        items: list[MilvusSearchEntity] = []
-        for entities in result:
-            for entity in entities:
-                items.append(MilvusSearchEntity(
-                    id=entity['id'],
-                    distance=entity['distance'],
-                    entity_name=entity['entity']['entity_name'],
+        items: list[MilvusSearchProduct] = []
+        for products in result:
+            for product in products:
+                items.append(MilvusSearchProduct(
+                    id=product['id'],
+                    distance=product['distance'],
+                    product_name=product['entity']['product_name'],
                 ))
         return items
 
@@ -142,8 +142,8 @@ class MilvusChunkRepository:
         schema.add_field(field_name="content", datatype=DataType.VARCHAR, max_length=65535)
         # chunk索引号
         schema.add_field(field_name="header_chunk_index", datatype=DataType.INT8)
-        # entity_name
-        schema.add_field(field_name="entity_name", datatype=DataType.VARCHAR, max_length=65535)
+        # 产品名
+        schema.add_field(field_name="product_name", datatype=DataType.VARCHAR, max_length=65535)
         # 稠密向量
         schema.add_field(field_name="dense_vector", datatype=DataType.FLOAT_VECTOR, dim=1024)
         # 稀疏向量
@@ -189,10 +189,10 @@ class MilvusChunkRepository:
     async def search_chunks(self,
                             dense_vectors: list[list[float]],
                             sparse_vectors: list[dict[int, float]],
-                            entity_names: list[str],
+                            product_names: list[str],
                             limit: int = 10
                             ):
-        expr = f'entity_name in {json.dumps(entity_names, ensure_ascii=False)}'
+        expr = f'product_name in {json.dumps(product_names, ensure_ascii=False)}'
         # 构建稠密向量搜索请求
         dense_request = AnnSearchRequest(
             data=dense_vectors,
@@ -216,7 +216,7 @@ class MilvusChunkRepository:
             reqs=[dense_request, sparse_request],
             ranker=ranker,
             limit=limit,
-            output_fields=['id', "title", "content", "entity_name", "file_name", "file_url"]
+            output_fields=['id', "title", "content", "product_name", "file_name", "file_url"]
         )
         items: list[MilvusSearchChunk] = []
         for chunks in result:
@@ -227,7 +227,7 @@ class MilvusChunkRepository:
                         distance=chunk['distance'],
                         title=chunk['entity']['title'],
                         content=chunk['entity']['content'],
-                        entity_name=chunk['entity']['entity_name'],
+                        product_name=chunk['entity']['product_name'],
                         file_name=chunk['entity']['file_name'],
                         file_url=chunk['entity']['file_url'],
                     )
